@@ -14,6 +14,7 @@ urlpatterns = [
     path('login/<str:mail>/<str:contrasena>', login, name='login'),
     path('GetInformationUsuario/<str:mail>/<str:key>', getInformationUsuario, name='GetInformationUsuario'),
     path('crear_usuario', crear_usuario, name='crear_usuario'),
+    path('crear_usuarioFoto', crear_usuarioFoto, name='crear_usuarioFoto'),
     path('editarTipografia', editarTipografia, name='editarTipografia'),
     path('editarTamanoLetra', editarTamanoLetra, name='editarTamanoLetra'),
     path('editarNombre', editarNombre, name='editarNombre'),
