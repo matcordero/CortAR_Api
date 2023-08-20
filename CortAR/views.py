@@ -358,6 +358,7 @@ def getPublicaciones(request):
             comentario_data = {
                 "idComentario": comentario.idComentario,
                 "usuario": comentario.usuario.nombre,
+                "usuarioFoto": publicacion.usuario.foto_perfil,
                 "texto": comentario.texto,
                 "foto": comentario.foto,
                 "fecha": comentario.fecha.strftime("%Y-%m-%d %H:%M:%S"),
@@ -368,6 +369,7 @@ def getPublicaciones(request):
         publicacion_data = {
             "idPublicacion": publicacion.idPublicacion,
             "usuario": publicacion.usuario.nombre,
+            "usuarioFoto": publicacion.usuario.foto_perfil,
             "texto": publicacion.texto,
             "foto": publicacion.foto,
             "zona": publicacion.zona,
@@ -396,6 +398,7 @@ def getPublicacionesPorUsuario(request,mail):
             comentario_data = {
                 "idComentario": comentario.idComentario,
                 "usuario": comentario.usuario.nombre,
+                "usuarioFoto": publicacion.usuario.foto_perfil,
                 "texto": comentario.texto,
                 "foto": comentario.foto,
                 "fecha": comentario.fecha.strftime("%Y-%m-%d %H:%M:%S"),
@@ -406,6 +409,7 @@ def getPublicacionesPorUsuario(request,mail):
         publicacion_data = {
             "idPublicacion": publicacion.idPublicacion,
             "usuario": publicacion.usuario.nombre,
+            "usuarioFoto": publicacion.usuario.foto_perfil,
             "texto": publicacion.texto,
             "foto": publicacion.foto,
             "zona": publicacion.zona,
