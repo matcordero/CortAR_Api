@@ -156,6 +156,8 @@ REST_FRAMEWORK = {
   'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_METHODS = [
     'GET',
     'POST',
@@ -177,7 +179,7 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://cortar.onrender.com/",  # Agrega aquí la URL de tu aplicación React Native
+#CORS_ALLOWED_ORIGINS = [
+ #   "https://cortar.onrender.com/",  # Agrega aquí la URL de tu aplicación React Native
     # Otras URL permitidas si es necesario
-]
+#]
