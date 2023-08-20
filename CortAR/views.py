@@ -61,6 +61,7 @@ def login(request, mail, contrasena):
             'tipografia': user.tipografia,
             'tamanoFuente': user.tamano_fuente,
             'fotoPerfil': user.foto_perfil,
+            'fechaNacimiento' :user.fechaNacimiento,
             'status_code': 202
         }
         return JsonResponse(response_data, status=202)
@@ -86,6 +87,30 @@ def crear_usuario(request):
     #contrasena_encriptada = make_password(contrasena)
     
     usuario = Usuario(mail=mail, nombre=nombre, contraseña=contrasena)
+    usuario.save()
+
+    return JsonResponse({"message": "Usuario Creado con Éxito"}, status=201)
+
+@api_view(['POST'])
+def crear_usuarioFoto(request):
+    #User = get_user_model()
+    mail = request.data.get('mail')
+    contrasena = request.data.get('contrasena')
+    nombre = request.data.get('nombre')
+    fecha = request.data.get('nombre')
+    imagen = request.FILES.get('imagen')
+
+    if not all([mail, contrasena, nombre,fecha,imagen]):
+        return JsonResponse({"error": "Campos Vacios"}, status=400)
+
+    if Usuario.objects.filter(mail=mail).exists():
+        return JsonResponse({"error": "El Usuario ya existe"}, status=400)
+
+    #contrasena_encriptada = make_password(contrasena)
+    cloudinary_response = cloudinary.uploader.upload(imagen)
+    imagen_url = cloudinary_response.get("url")
+    imagen_id = cloudinary_response.get("public_id")
+    usuario = Usuario(mail=mail, nombre=nombre, contraseña=contrasena,fechaNacimiento = fecha, foto_perfil = imagen_url,id_foto = imagen_id)
     usuario.save()
 
     return JsonResponse({"message": "Usuario Creado con Éxito"}, status=201)

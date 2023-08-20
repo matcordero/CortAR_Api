@@ -12,7 +12,7 @@ class Usuario(models.Model):
     key_validate = models.CharField(max_length=100, null=True, blank=True)
     tipografia = models.CharField(max_length=100)
     tamano_fuente = models.FloatField(default=12.0)
-    
+    fechaNacimiento = models.DateTimeField(default=timezone.now)
     
 class Publicacion(models.Model):
     idPublicacion = models.AutoField(primary_key=True)
