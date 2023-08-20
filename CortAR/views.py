@@ -97,7 +97,7 @@ def crear_usuarioFoto(request):
     mail = request.data.get('mail')
     contrasena = request.data.get('contrasena')
     nombre = request.data.get('nombre')
-    fecha = request.data.get('nombre')
+    fecha = request.data.get('fecha')
     imagen = request.FILES.get('imagen')
 
     if not all([mail, contrasena, nombre,fecha,imagen]):
