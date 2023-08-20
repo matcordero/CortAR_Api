@@ -41,7 +41,7 @@ def obtener_usuarios():
     usuarios = Usuario.objects.all()
     print(usuarios)
 
-@require_GET
+@api_view(['GET'])
 def login(request, mail, contrasena):
     #obtener_usuarios()
     try:
@@ -90,7 +90,7 @@ def crear_usuario(request):
 
     return JsonResponse({"message": "Usuario Creado con Éxito"}, status=201)
     
-@require_GET
+@api_view(['GET'])
 def getInformationUsuario(request, mail, key):
     if not all([mail, key]):
         return JsonResponse({"error": "Campos Vacios"}, status=400)
@@ -231,7 +231,7 @@ def editarFotoPerfil(request):
 
 #--ZONAS--------------
 
-@require_GET
+@api_view(['GET'])
 def get_zonas(request):
     zonas = ZonaUsuario.objects.all()
     zonas_data = [{'nombre': zona.nombre, 'descripcion': zona.descripcion} for zona in zonas]
@@ -320,7 +320,7 @@ def crear_publicacionFoto(request):
     
     return JsonResponse({"message": "La Publicacion fue Creado con Éxito"}, status=201)
 
-@require_GET
+@api_view(['GET'])
 def getPublicaciones(request):
     publicaciones = Publicacion.objects.all()
     publicaciones_con_comentarios = []
@@ -354,7 +354,7 @@ def getPublicaciones(request):
 
     return JsonResponse(publicaciones_con_comentarios, safe=False)
     
-@require_GET
+@api_view(['GET'])
 def getPublicacionesPorUsuario(request,mail):
     try:
         usuario_actual = Usuario.objects.get(mail=mail)
