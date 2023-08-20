@@ -100,7 +100,7 @@ def crear_usuarioFoto(request):
     fecha = request.data.get('fecha')
     imagen = request.FILES.get('imagen')
 
-    if not all([mail, contrasena, nombre,fecha]):
+    if not all([mail, contrasena, nombre,fecha,imagen]):
         return JsonResponse({"error": "Campos Vacios"}, status=400)
 
     if Usuario.objects.filter(mail=mail).exists():
