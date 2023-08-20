@@ -10,6 +10,7 @@ router.register(r'ZonaUsuario',ZonaUsuarioViewSet)
 
 urlpatterns = [
     path('',include(router.urls)),
+    path('mi_endpoint', mi_endpoint, name='mi_endpoint'),
     path('login/<str:mail>/<str:contrasena>', login, name='login'),
     path('GetInformationUsuario/<str:mail>/<str:key>', getInformationUsuario, name='GetInformationUsuario'),
     path('crear_usuario', crear_usuario, name='crear_usuario'),

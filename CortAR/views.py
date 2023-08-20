@@ -33,6 +33,10 @@ class ZonaUsuarioViewSet(viewsets.ModelViewSet):
     queryset = ZonaUsuario.objects.all()
     serializer_class = ZonaUsuarioSerializador
 
+def mi_endpoint(request):
+    data = {'mensaje': '¡Hola desde mi endpoint!'}
+    return JsonResponse(data)
+
 def obtener_usuarios():
     usuarios = Usuario.objects.all()
     print(usuarios)
