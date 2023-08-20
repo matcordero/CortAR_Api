@@ -352,7 +352,7 @@ def getPublicaciones(request):
         }
         publicaciones_con_comentarios.append(publicacion_data)
 
-    return JsonResponse(publicaciones_con_comentarios)
+    return JsonResponse(publicaciones_con_comentarios, safe=False)
     
 @require_GET
 def getPublicacionesPorUsuario(request,mail):
@@ -390,7 +390,7 @@ def getPublicacionesPorUsuario(request,mail):
         }
         publicaciones_con_comentarios.append(publicacion_data)
 
-    return JsonResponse(publicaciones_con_comentarios)
+    return JsonResponse(publicaciones_con_comentarios, safe=False)
    
 @api_view(['POST'])    
 def deletePublicacion(request):
