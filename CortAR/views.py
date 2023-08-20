@@ -98,7 +98,7 @@ def crear_usuarioFoto(request):
     contrasena = request.data.get('contrasena')
     nombre = request.data.get('nombre')
     fecha = request.data.get('fecha')
-    #imagen = request.FILES.get('imagen')
+    imagen = request.FILES.get('imagen')
 
     if not all([mail, contrasena, nombre,fecha]):
         return JsonResponse({"error": "Campos Vacios"}, status=400)
@@ -107,10 +107,10 @@ def crear_usuarioFoto(request):
         return JsonResponse({"error": "El Usuario ya existe"}, status=400)
 
     #contrasena_encriptada = make_password(contrasena)
-    #cloudinary_response = cloudinary.uploader.upload(imagen)
-    #imagen_url = cloudinary_response.get("url")
-    #imagen_id = cloudinary_response.get("public_id")
-    usuario = Usuario(mail=mail, nombre=nombre, contraseña=contrasena,fechaNacimiento = fecha)
+    cloudinary_response = cloudinary.uploader.upload(imagen)
+    imagen_url = cloudinary_response.get("url")
+    imagen_id = cloudinary_response.get("public_id")
+    usuario = Usuario(mail=mail, nombre=nombre, contraseña=contrasena,fechaNacimiento = fecha, foto_perfil = imagen_url,id_foto = imagen_id)
     usuario.save()
 
     return JsonResponse({"message": "Usuario Creado con Éxito"}, status=201)
