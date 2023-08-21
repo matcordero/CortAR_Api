@@ -109,8 +109,7 @@ def crear_usuarioFoto(request):
     #contrasena_encriptada = make_password(contrasena)
     cloudinary_response = cloudinary.uploader.upload(imagen)
     imagen_url = cloudinary_response.get("url")
-    imagen_id = cloudinary_response.get("public_id")
-    usuario = Usuario(mail=mail, nombre=nombre, contraseña=contrasena,fechaNacimiento = fecha, foto_perfil = imagen_url,id_foto = imagen_id)
+    usuario = Usuario(mail=mail, nombre=nombre, contraseña=contrasena,fechaNacimiento = fecha, foto_perfil = imagen_url)
     usuario.save()
 
     return JsonResponse({"message": "Usuario Creado con Éxito"}, status=201)
@@ -285,9 +284,10 @@ def crear_publicacion(request):
     mail = request.data.get('mail')
     key = request.data.get('key')
     texto = request.data.get('texto')
+    titulo = request.data.get('titulo')
     zona = request.data.get('zona')
     
-    if not all([mail, key, texto, zona]):
+    if not all([mail, key, texto, zona, titulo]):
         return JsonResponse({"error": "Campos Vacios"}, status=400)
 
     try:
@@ -302,7 +302,7 @@ def crear_publicacion(request):
     #    return JsonResponse({"error": "Zona no Encontrada"}, status=400)
     
     
-    publicacion = Publicacion(usuario=usuario_actual,texto=texto,zona=zona)
+    publicacion = Publicacion(usuario=usuario_actual,texto=texto,zona=zona,titulo=titulo)
     publicacion.save()
     
     return JsonResponse({"message": "La Publicacion fue Creado con Éxito"}, status=201)
@@ -313,9 +313,10 @@ def crear_publicacionFoto(request):
     key = request.data.get('key')
     texto = request.data.get('texto')
     zona = request.data.get('zona')
+    titulo = request.data.get('titulo')
     imagen = request.FILES.get('imagen')  # Obtén la imagen del campo "imagen"
     
-    if not all([mail, key, texto, zona, imagen]):
+    if not all([mail, key, texto, zona, imagen, titulo]):
         return JsonResponse({"error": "Campos Vacios"}, status=400)
 
     try:
@@ -332,14 +333,13 @@ def crear_publicacionFoto(request):
     # Sube la imagen a Cloudinary y obtén la URL y el ID de la imagen subida
     cloudinary_response = cloudinary.uploader.upload(imagen)
     imagen_url = cloudinary_response.get("url")
-    imagen_id = cloudinary_response.get("public_id")
     
     publicacion = Publicacion(
         usuario=usuario_actual, 
         texto=texto, 
         zona=zona,
         foto=imagen_url,  # Almacena la URL de la imagen
-        idFoto=imagen_id     # Almacena el ID de la imagen en Cloudinary
+        titulo=titulo     # Almacena el ID de la imagen en Cloudinary
     )
     publicacion.save()
     
@@ -371,6 +371,7 @@ def getPublicaciones(request):
             "usuario": publicacion.usuario.nombre,
             "usuarioFoto": publicacion.usuario.foto_perfil,
             "texto": publicacion.texto,
+            "titulo": publicacion.titulo,
             "foto": publicacion.foto,
             "zona": publicacion.zona,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
@@ -411,6 +412,7 @@ def getPublicacionesPorUsuario(request,mail):
             "usuario": publicacion.usuario.nombre,
             "usuarioFoto": publicacion.usuario.foto_perfil,
             "texto": publicacion.texto,
+            "titulo": publicacion.titulo,
             "foto": publicacion.foto,
             "zona": publicacion.zona,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
@@ -535,9 +537,8 @@ def crear_comentarioFoto(request):
     
     cloudinary_response = cloudinary.uploader.upload(imagen)
     imagen_url = cloudinary_response.get("url")
-    imagen_id = cloudinary_response.get("public_id")
     
-    comentario = Comentario(publicacion=publicacion,texto=texto,Usuario=usuario_actual,foto = imagen_url, idFoto = imagen_id)
+    comentario = Comentario(publicacion=publicacion,texto=texto,Usuario=usuario_actual,foto = imagen_url)
     comentario.save()
     
     return JsonResponse({"message": "El Comentario fue Creado con Éxito"}, status=201)
@@ -568,7 +569,7 @@ def actualizarLikesPublicacion(request):
     publicacion.like = publicacion.like+likes
     publicacion.save()
     
-    return JsonResponse({"message": "Likes Actualizados"}, status=200)@api_view(['POST'])
+    return JsonResponse({"message": "Likes Actualizados"}, status=200)
 
 @api_view(['POST'])
 def actualizarLikesComentarios(request):

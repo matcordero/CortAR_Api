@@ -8,7 +8,6 @@ class Usuario(models.Model):
     contraseña = models.TextField()
     nombre = models.CharField(max_length=100)
     foto_perfil = models.TextField()
-    id_foto = models.CharField(max_length=100, null=True, blank=True)
     key_validate = models.CharField(max_length=100, null=True, blank=True)
     tipografia = models.CharField(max_length=100)
     tamano_fuente = models.FloatField(default=12.0)
@@ -17,9 +16,9 @@ class Usuario(models.Model):
 class Publicacion(models.Model):
     idPublicacion = models.AutoField(primary_key=True)
     usuario = models.ForeignKey('Usuario',on_delete=models.DO_NOTHING)
+    titulo = models.TextField(default="")
     texto = models.TextField()
     foto = models.TextField()
-    idFoto = models.TextField()
     zona = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
     like = models.IntegerField(default=0)
@@ -33,7 +32,6 @@ class Comentario(models.Model):
     usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE)
     texto = models.TextField()
     foto = models.TextField()
-    idFoto = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
     like = models.IntegerField(default=0)
     def modificar_like(self, like):
