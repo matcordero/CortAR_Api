@@ -27,8 +27,8 @@ urlpatterns = [
     
     path('crear_publicacion', crear_publicacion, name='crear_publicacion'),
     path('crear_publicacionFoto', crear_publicacionFoto, name='crear_publicacionFoto'),
-    path('getPublicaciones', getPublicaciones, name='getPublicaciones'),
-    path('getPublicacionesPorUsuario/<str:mail>', getPublicacionesPorUsuario, name='getPublicacionesPorUsuario'),
+    path('getPublicaciones/<str:mail>/<str:key>', getPublicaciones, name='getPublicaciones'),
+    path('getPublicacionesPorUsuario/<str:mailBuscado>/<str:mail>/<str:key>', getPublicacionesPorUsuario, name='getPublicacionesPorUsuario'),
     path('deletePublicacion', deletePublicacion, name='deletePublicacion'),
     path('actualizarLikesPublicacion', actualizarLikesPublicacion, name='actualizarLikesPublicacion'),
     

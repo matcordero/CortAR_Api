@@ -251,7 +251,7 @@ def editarFotoPerfil(request):
     usuario_actual.foto_perfil = imagen_url
     usuario_actual.save()
     
-    return JsonResponse({"message": "Contraseña Cambiado"}, status=200)
+    return JsonResponse({"message": "Foto de Perfil Cambiado"}, status=200)
 
 #--ZONAS--------------
 
@@ -346,9 +346,14 @@ def crear_publicacionFoto(request):
     return JsonResponse({"message": "La Publicacion fue Creado con Éxito"}, status=201)
 
 @api_view(['GET'])
-def getPublicaciones(request):
+def getPublicaciones(request,mail,key):
     publicaciones = Publicacion.objects.all()
     publicaciones_con_comentarios = []
+
+    try:
+        usuario_actual = Usuario.objects.get(mail=mail, key_validate = key)
+    except Usuario.DoesNotExist:
+       return JsonResponse({"error": "Fallo de Validacion"}, status=400)
 
     for publicacion in publicaciones:
         comentarios = Comentario.objects.filter(publicacion=publicacion)
@@ -360,9 +365,10 @@ def getPublicaciones(request):
                 "usuario": comentario.usuario.nombre,
                 "usuarioFoto": publicacion.usuario.foto_perfil,
                 "texto": comentario.texto,
-                "foto": comentario.foto,
+                "foto": comentario.total_likes,
                 "fecha": comentario.fecha.strftime("%Y-%m-%d %H:%M:%S"),
-                "like": comentario.like,
+                "like": comentario.total_likes(),
+                "likeo": usuario_actual.get_LikeComentario(comentario)
             }
             comentario_list.append(comentario_data)
 
@@ -372,10 +378,11 @@ def getPublicaciones(request):
             "usuarioFoto": publicacion.usuario.foto_perfil,
             "texto": publicacion.texto,
             "titulo": publicacion.titulo,
-            "foto": publicacion.foto,
+            "foto": publicacion.total_likes(),
             "zona": publicacion.zona,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
-            "like": publicacion.like,
+            "like": publicacion.total_likes(),
+            "likeo":usuario_actual.get_LikePublicacion(publicacion),
             "comentarios": comentario_list
         }
         publicaciones_con_comentarios.append(publicacion_data)
@@ -383,14 +390,20 @@ def getPublicaciones(request):
     return JsonResponse(publicaciones_con_comentarios, safe=False)
     
 @api_view(['GET'])
-def getPublicacionesPorUsuario(request,mail):
+def getPublicacionesPorUsuario(request,mailBuscado,mail,key):
     try:
-        usuario_actual = Usuario.objects.get(mail=mail)
+        usuarioBuscado = Usuario.objects.get(mail=mailBuscado)
     except Usuario.DoesNotExist:
        return JsonResponse({"error": "Usuario no Existe"}, status=400)
     
+    try:
+        usuario_actual = Usuario.objects.get(mail=mail, key_validate = key)
+    except Usuario.DoesNotExist:
+       return JsonResponse({"error": "Fallo de Validacion"}, status=400)
+    
+    
     publicaciones_con_comentarios = []
-    publicaciones = Publicacion.objects.filter(usuario=usuario_actual)
+    publicaciones = Publicacion.objects.filter(usuario=usuarioBuscado)
     for publicacion in publicaciones:
         comentarios = Comentario.objects.filter(publicacion=publicacion)
         comentario_list = []
@@ -403,7 +416,8 @@ def getPublicacionesPorUsuario(request,mail):
                 "texto": comentario.texto,
                 "foto": comentario.foto,
                 "fecha": comentario.fecha.strftime("%Y-%m-%d %H:%M:%S"),
-                "like": comentario.like,
+                "like": comentario.total_likes(),
+                "likeo": usuario_actual.get_LikeComentario(comentario)
             }
             comentario_list.append(comentario_data)
 
@@ -416,7 +430,8 @@ def getPublicacionesPorUsuario(request,mail):
             "foto": publicacion.foto,
             "zona": publicacion.zona,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
-            "like": publicacion.like,
+            "like": publicacion.total_likes(),
+            "likeo":usuario_actual.get_LikePublicacion(publicacion),
             "comentarios": comentario_list
         }
         publicaciones_con_comentarios.append(publicacion_data)
@@ -472,8 +487,7 @@ def actualizarLikesPublicacion(request):
     if usuario_actual == None or usuario_actual.key_validate != key or publicacion.usuario != usuario_actual:
         return JsonResponse({"error": "Fallo de Validacion"}, status=400)
     
-    publicacion.like = publicacion.like+likes
-    publicacion.save()
+    usuario_actual.dar_LikePublicacion(publicacion)
     
     return JsonResponse({"message": "Likes Actualizados"}, status=200)
 
@@ -543,33 +557,6 @@ def crear_comentarioFoto(request):
     
     return JsonResponse({"message": "El Comentario fue Creado con Éxito"}, status=201)
 
-@api_view(['POST'])
-def actualizarLikesPublicacion(request):
-    id = request.data.get('id')
-    likes = request.data.get('likes') 
-    mail = request.data.get('mail')
-    key = request.data.get('key')
-    
-    if not all([mail, key, id]):
-        return JsonResponse({"error": "Campos Vacios"}, status=400)
-    
-    try:
-        publicacion = Publicacion.objects.get(idPublicacion=id)
-    except Publicacion.DoesNotExist:
-        return JsonResponse({"error": "Publicacion No Existia"}, status=400)
-    
-    try:
-        usuario_actual = Usuario.objects.get(mail=mail)
-    except Usuario.DoesNotExist:
-       usuario_actual = None
-       
-    if usuario_actual == None or usuario_actual.key_validate != key or publicacion.usuario != usuario_actual:
-        return JsonResponse({"error": "Fallo de Validacion"}, status=400)
-    
-    publicacion.like = publicacion.like+likes
-    publicacion.save()
-    
-    return JsonResponse({"message": "Likes Actualizados"}, status=200)
 
 @api_view(['POST'])
 def actualizarLikesComentarios(request):
@@ -594,8 +581,7 @@ def actualizarLikesComentarios(request):
     if usuario_actual == None or usuario_actual.key_validate != key or comentario.usuario != usuario_actual:
         return JsonResponse({"error": "Fallo de Validacion"}, status=400)
     
-    comentario.like = comentario.like+likes
-    comentario.save()
+    usuario_actual.dar_LikeComentario(comentario)
     
     return JsonResponse({"message": "Likes Actualizados"}, status=200)
 
