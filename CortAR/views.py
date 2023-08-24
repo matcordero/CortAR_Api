@@ -365,7 +365,7 @@ def getPublicaciones(request,mail,key):
                 "usuario": comentario.usuario.nombre,
                 "usuarioFoto": publicacion.usuario.foto_perfil,
                 "texto": comentario.texto,
-                "foto": comentario.total_likes,
+                "foto": comentario.foto,
                 "fecha": comentario.fecha.strftime("%Y-%m-%d %H:%M:%S"),
                 "like": comentario.total_likes(),
                 "likeo": usuario_actual.get_LikeComentario(comentario)
@@ -378,7 +378,7 @@ def getPublicaciones(request,mail,key):
             "usuarioFoto": publicacion.usuario.foto_perfil,
             "texto": publicacion.texto,
             "titulo": publicacion.titulo,
-            "foto": publicacion.total_likes(),
+            "foto": publicacion.foto,
             "zona": publicacion.zona,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
             "like": publicacion.total_likes(),
