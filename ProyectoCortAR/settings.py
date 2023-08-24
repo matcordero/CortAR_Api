@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'coreapi',
     'CortAR',
-    #'corsheaders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #'whitenoise.middleware.WhiteNoiseMiddleware',
-    #'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'ProyectoCortAR.urls'
