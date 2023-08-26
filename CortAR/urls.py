@@ -11,6 +11,7 @@ router.register(r'ZonaUsuario',ZonaUsuarioViewSet)
 urlpatterns = [
     path('',include(router.urls)),
     path('mi_endpoint', mi_endpoint, name='mi_endpoint'),
+    path('encriptar/<str:dato>', encriptar, name='login'),
     path('login/<str:mail>/<str:contrasena>', login, name='login'),
     path('GetInformationUsuario/<str:mail>/<str:key>', getInformationUsuario, name='GetInformationUsuario'),
     path('crear_usuario', crear_usuario, name='crear_usuario'),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('crear_publicacionFoto', crear_publicacionFoto, name='crear_publicacionFoto'),
     path('getPublicaciones/<str:mail>/<str:key>', getPublicaciones, name='getPublicaciones'),
     path('getPublicacionesPorUsuario/<str:mailBuscado>/<str:mail>/<str:key>', getPublicacionesPorUsuario, name='getPublicacionesPorUsuario'),
+    path('getPublicacionesPorZona/<str:zona>/<str:mail>/<str:key>', getPublicacionesPorZona, name='getPublicacionesPorZona'),
     path('deletePublicacion', deletePublicacion, name='deletePublicacion'),
     path('actualizarLikesPublicacion', actualizarLikesPublicacion, name='actualizarLikesPublicacion'),
     

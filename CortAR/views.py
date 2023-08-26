@@ -15,7 +15,9 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
+import hashlib
+import secrets
+from django.db.models import Q
 
 class PublicacionViewSet(viewsets.ModelViewSet):
     queryset = Publicacion.objects.all()
@@ -40,6 +42,13 @@ def mi_endpoint(request):
 def obtener_usuarios():
     usuarios = Usuario.objects.all()
     print(usuarios)
+
+@api_view(['GET'])
+def encriptar(request, dato):
+    salt = secrets.token_bytes(16)  # Genera un salt aleatorio
+    password_hash = hashlib.pbkdf2_hmac('sha256', dato.encode('utf-8'), salt, 100000)
+    encrypted_value = salt + password_hash
+    return JsonResponse({"valor_encriptado": encrypted_value.hex()}, status=202)
 
 @api_view(['GET'])
 def login(request, mail, contrasena):
@@ -437,7 +446,51 @@ def getPublicacionesPorUsuario(request,mailBuscado,mail,key):
         publicaciones_con_comentarios.append(publicacion_data)
 
     return JsonResponse(publicaciones_con_comentarios, safe=False)
-   
+
+@api_view(['GET'])
+def getPublicacionesPorZona(request,zona,mail,key):
+    try:
+        usuario_actual = Usuario.objects.get(mail=mail, key_validate = key)
+    except Usuario.DoesNotExist:
+       return JsonResponse({"error": "Fallo de Validacion"}, status=400)
+    
+    
+    publicaciones_con_comentarios = []
+    publicaciones = Publicacion.objects.filter(Q(zona__icontains=zona))
+    for publicacion in publicaciones:
+        comentarios = Comentario.objects.filter(publicacion=publicacion)
+        comentario_list = []
+
+        for comentario in comentarios:
+            comentario_data = {
+                "idComentario": comentario.idComentario,
+                "usuario": comentario.usuario.nombre,
+                "usuarioFoto": publicacion.usuario.foto_perfil,
+                "texto": comentario.texto,
+                "foto": comentario.foto,
+                "fecha": comentario.fecha.strftime("%Y-%m-%d %H:%M:%S"),
+                "like": comentario.total_likes(),
+                "likeo": usuario_actual.get_LikeComentario(comentario)
+            }
+            comentario_list.append(comentario_data)
+
+        publicacion_data = {
+            "idPublicacion": publicacion.idPublicacion,
+            "usuario": publicacion.usuario.nombre,
+            "usuarioFoto": publicacion.usuario.foto_perfil,
+            "texto": publicacion.texto,
+            "titulo": publicacion.titulo,
+            "foto": publicacion.foto,
+            "zona": publicacion.zona,
+            "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
+            "like": publicacion.total_likes(),
+            "likeo":usuario_actual.get_LikePublicacion(publicacion),
+            "comentarios": comentario_list
+        }
+        publicaciones_con_comentarios.append(publicacion_data)
+
+    return JsonResponse(publicaciones_con_comentarios, safe=False)
+
 @api_view(['POST'])    
 def deletePublicacion(request):
     id = request.data.get('id')
@@ -517,7 +570,7 @@ def crear_comentario(request):
     except Publicacion.DoesNotExist:
        return JsonResponse({"error": "No se encontro la Publicacion"}, status=400)
     
-    comentario = Comentario(publicacion=publicacion,texto=texto,Usuario=usuario_actual)
+    comentario = Comentario(publicacion=publicacion,texto=texto,usuario=usuario_actual)
     comentario.save()
     
     return JsonResponse({"message": "El Comentario fue Creado con Éxito"}, status=201)
