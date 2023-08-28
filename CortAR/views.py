@@ -295,6 +295,7 @@ def crear_publicacion(request):
     texto = request.data.get('texto')
     titulo = request.data.get('titulo')
     zona = request.data.get('zona')
+    sugerencia = request.data.get('sugerencia')
     
     if not all([mail, key, texto, zona, titulo]):
         return JsonResponse({"error": "Campos Vacios"}, status=400)
@@ -311,7 +312,7 @@ def crear_publicacion(request):
     #    return JsonResponse({"error": "Zona no Encontrada"}, status=400)
     
     
-    publicacion = Publicacion(usuario=usuario_actual,texto=texto,zona=zona,titulo=titulo)
+    publicacion = Publicacion(usuario=usuario_actual,texto=texto,zona=zona,titulo=titulo,sugerencia=sugerencia)
     publicacion.save()
     
     return JsonResponse({"message": "La Publicacion fue Creado con Éxito"}, status=201)
@@ -324,6 +325,7 @@ def crear_publicacionFoto(request):
     zona = request.data.get('zona')
     titulo = request.data.get('titulo')
     imagen = request.FILES.get('imagen')  # Obtén la imagen del campo "imagen"
+    sugerencia = request.data.get('sugerencia')
     
     if not all([mail, key, texto, zona, imagen, titulo]):
         return JsonResponse({"error": "Campos Vacios"}, status=400)
@@ -348,8 +350,8 @@ def crear_publicacionFoto(request):
         texto=texto, 
         zona=zona,
         foto=imagen_url,  # Almacena la URL de la imagen
-        titulo=titulo     # Almacena el ID de la imagen en Cloudinary
-    )
+        titulo=titulo,     # Almacena el ID de la imagen en Cloudinary
+        sugerencia=sugerencia)
     publicacion.save()
     
     return JsonResponse({"message": "La Publicacion fue Creado con Éxito"}, status=201)
@@ -389,6 +391,7 @@ def getPublicaciones(request,mail,key):
             "titulo": publicacion.titulo,
             "foto": publicacion.foto,
             "zona": publicacion.zona,
+            "sugerencia" : publicacion.sugerencia,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
             "like": publicacion.total_likes(),
             "likeo":usuario_actual.get_LikePublicacion(publicacion),
@@ -438,6 +441,7 @@ def getPublicacionesPorUsuario(request,mailBuscado,mail,key):
             "titulo": publicacion.titulo,
             "foto": publicacion.foto,
             "zona": publicacion.zona,
+            "sugerencia" : publicacion.sugerencia,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
             "like": publicacion.total_likes(),
             "likeo":usuario_actual.get_LikePublicacion(publicacion),
@@ -482,6 +486,7 @@ def getPublicacionesPorZona(request,zona,mail,key):
             "titulo": publicacion.titulo,
             "foto": publicacion.foto,
             "zona": publicacion.zona,
+            "sugerencia" : publicacion.sugerencia,
             "fecha": publicacion.fecha.strftime("%Y-%m-%d %H:%M:%S"),
             "like": publicacion.total_likes(),
             "likeo":usuario_actual.get_LikePublicacion(publicacion),

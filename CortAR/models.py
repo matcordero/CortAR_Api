@@ -53,6 +53,7 @@ class Publicacion(models.Model):
     texto = models.TextField()
     foto = models.TextField()
     zona = models.TextField()
+    sugerencia = models.TextField(default="")
     fecha = models.DateTimeField(default=timezone.now)
     #like = models.IntegerField(default=0)
     #comentarios
